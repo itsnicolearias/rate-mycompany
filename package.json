@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
+  "type": "commonjs",
   "license": "AGPL-version-3.0",
   "private": false,
   "engines": {
@@ -24,16 +24,17 @@
   "contributors": [],
   "scripts": {
     "build": "tsc",
-    "dev": "nodemon src/index.ts --exec ts-node",
+    "dev": "npx ts-node-dev --respawn --watch -P ./tsconfig.json src/index.ts",
     "test": ""
   },
   "devDependencies": {
     "@types/express": "^4.17.21",
     "nodemon": "^3.1.4",
-    "ts-node": "^10.9.2",
     "typescript": "^5.5.2"
   },
   "dependencies": {
-    "express": "^4.19.2"
+    "express": "^4.19.2",
+    "prisma": "^5.16.0",
+    "ts-node": "^10.9.2"
   }
 }
