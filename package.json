@@ -1,0 +1,39 @@
+{
+  "name": "rate-mycompany",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "license": "AGPL-version-3.0",
+  "private": false,
+  "engines": {
+    "node": ">= 14.0.0",
+    "npm": ">= 6.0.0"
+  },
+  "homepage": "",
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "bugs": "",
+  "keywords": [],
+  "author": {
+    "name": "",
+    "email": "nicolmccann@gmail.com"
+  },
+  "contributors": [],
+  "scripts": {
+    "build": "tsc",
+    "dev": "nodemon src/index.ts --exec ts-node",
+    "test": ""
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  }
+}
