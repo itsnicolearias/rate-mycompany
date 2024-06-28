@@ -1,0 +1,110 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Company {
+  company_id String @id @default(uuid())
+  name String? @db.VarChar(100)
+  description String? @db.Text
+  logo String? @db.Text
+  principal_picture String? @db.Text
+  social_media Json? @db.JsonB
+  creation_date DateTime? @db.Date
+  banner_picture String? @db.Text
+  other_pictures String? @db.Text
+  located_in String? @db.VarChar(100)
+  employees_number Int?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted Boolean @default(false)
+  Qualifications Qualification[]
+}
+
+model Subscription {
+  subscription_id String @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted Boolean @default(false)
+  users User[]
+}
+
+model User {
+  user_id String @id @default(uuid())
+  email String? @db.VarChar(100)
+  phone_number String? @db.VarChar(20)
+  country String? @db.VarChar(50)
+  city String? @db.VarChar(50)
+  first_name String? @db.VarChar(50)
+  last_name String? @db.VarChar(100)
+  subscription_id String? @db.VarChar(36)
+  is_subscription_owner Boolean? @default(false)
+  profile_picture String? @db.Text
+  born_date DateTime?
+  password String? @db.Text
+  role String? @db.VarChar(100)
+  forget_password_token String? @db.Text
+  verify_account_token String? @db.Text
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted Boolean @default(false)
+  Subscription Subscription? @relation(fields: [subscription_id], references: [subscription_id])
+  qualifications Qualification[]
+  employees Employee[]
+}
+
+model Employee {
+  employee_id String @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted Boolean @default(false)
+  department_id String? @db.VarChar(36)
+  user_id String @db.VarChar(36)
+  Department Department? @relation(fields: [department_id], references: [department_id])
+  User User @relation(fields: [user_id], references: [user_id])
+}
+
+model Qualification {
+  qualification_id String @id @default(uuid())
+  value Float? @db.DoublePrecision
+  comment String? @db.Text
+  user_id String? @db.VarChar(36)
+  company_id String? @db.VarChar(36)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted Boolean @default(false)
+  User User? @relation(fields: [user_id], references: [user_id])
+  Company Company? @relation(fields: [company_id], references: [company_id])
+  qualification_category_id String?  @db.VarChar(36)
+  QualificationCategory QualificationCategory? @relation(fields: [qualification_category_id], references: [qualification_category_id])
+}
+
+model Department {
+  department_id String @id @default(uuid())
+  name String? @db.VarChar(100)
+  description String @db.Text
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted Boolean @default(false)
+  employees Employee[]
+}
+
+model QualificationCategory {
+  qualification_category_id String @id @default(uuid())
+  name String? @db.VarChar(100)
+  description String @db.Text
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  deleted Boolean @default(false)
+  qualifications Qualification[]
+}
