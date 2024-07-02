@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
+export const Prisma = new PrismaClient()
 
 export class App {
     app: Application
@@ -12,6 +12,6 @@ export class App {
     async listen() {
        await this.app.listen(4000);
        console.log('server running')
-       //await prisma.
+       await Prisma.$connect().then(() => console.log('DB coneccted'))
     }
 }
