@@ -51,6 +51,7 @@ model User {
   last_name String? @db.VarChar(100)
   subscription_id String? @db.VarChar(36)
   is_subscription_owner Boolean? @default(false)
+  verified Boolean? @default(false)
   profile_picture String? @db.Text
   born_date DateTime?
   password String? @db.Text
