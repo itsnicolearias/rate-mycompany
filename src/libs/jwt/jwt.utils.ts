@@ -3,10 +3,9 @@ import moment from 'moment';
 import 'dotenv/config';
 import boom from '@hapi/boom';
 import type { JwtPayload } from 'jsonwebtoken';
-
 import { User } from '@prisma/client';
-import { config } from '../../config/environment.config';
 
+import { config } from '../../config/environment.config';
 
 export const getToken = (user: Partial<User>) => {
   try {
@@ -28,13 +27,13 @@ export const getToken = (user: Partial<User>) => {
 export function decodeToken(bearerHeader: string, secret: string) {
   try {
     const bearer = bearerHeader.split(' ');
-
     const token = bearer[1];
 
-    if (!token) throw boom.forbidden('Token is not valid');
+    if (!token) {
+      throw boom.forbidden('Token is not valid');
+    }
 
     const decoded = jwt.verify(token, secret) as JwtPayload;
-
     return decoded;
   } catch (error) {
     throw boom.unauthorized(error);
