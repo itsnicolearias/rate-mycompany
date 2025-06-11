@@ -4,15 +4,55 @@ import { PrismaClient } from "@prisma/client";
 
 import { IAuthService } from "../interfaces/auth-service.interface";
 import { RegisterBody, LoginBody, VerificationBody, ForgotPassword, EnterPassword } from "../types/auth.types";
-import { getToken } from "../../../libs/jwt/jwt.utils";
+import { getToken, getVerifyToken } from "../../../libs/jwt/jwt.utils";
+import { sendEmail } from "../../../libs/nodemailer/utils";
+import { config } from "../../../config/environment.config";
 
 const prisma = new PrismaClient();
 class AuthService implements IAuthService {
     public async Register(body: RegisterBody): Promise<any> {
         try {
+            // usuario deb ingresar email y contraseña
+            // verificar si no existe en la base de datos
+            const user = await prisma.user.findFirst({
+                where: {
+                  email: body.email,
+                },
+              })
+
+            if (user){
+                throw Boom.forbidden('User already exists')
+            }
+            // storng password
+
+            // crear una suscripion
+            const suscription  = await prisma.subscription.create({ data: {}});
             
-        } catch (error) {
-            throw Boom.badRequest(error)
+            
+            // crear un usuario
+            const newUser  = await  prisma.user.create({
+                data: {
+                    email: body.email,
+                    password: body.password,
+                    is_subscription_owner: true,
+                    subscription_id: suscription.subscription_id,
+                }
+            })
+            
+            // crear token para verificar cuenta
+            const verifyToken = getVerifyToken(newUser)
+
+            
+            // crear una empresa asociada a ese usuario por defecto
+            await prisma.company.create({ data: {}});
+
+            await prisma.user.update({ data: { verify_account_token: verifyToken}, where: {user_id:  newUser.user_id}})
+            // usuario debe verificar su correo
+            const  link = `${config.urlFront}/verify-account?token=${verifyToken}`;
+
+            await sendEmail({ to: newUser.email, subject: 'Verify your email', text: `<p> Welcome to Rate My Companie, <a href="${link}"> click here</a> to verify your email. </p>`})
+            } catch (error) {
+                throw Boom.badRequest(error)
         }
     }
 

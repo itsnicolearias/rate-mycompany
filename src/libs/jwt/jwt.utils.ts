@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import moment from 'moment';
-import 'dotenv/config';
+//import 'dotenv/config';
 import boom from '@hapi/boom';
 import type { JwtPayload } from 'jsonwebtoken';
 import { User } from '@prisma/client';
@@ -18,6 +18,21 @@ export const getToken = (user: Partial<User>) => {
       exp: moment().add(7, 'days').unix(),
     };
     return jwt.sign(payload, config.jwtSecret);
+  } catch (e) {
+    throw boom.badRequest(e);
+  }
+};
+
+export const getVerifyToken = (user: Partial<User>) => {
+  try {
+    const payload = {
+      sub: user.user_id,
+      verified: user.verified,
+      deleted: user.deleted,
+      iat: moment().unix(),
+      exp: moment().add(1, 'days').unix(),
+    };
+    return jwt.sign(payload, config.jwtRecoverySecret);
   } catch (e) {
     throw boom.badRequest(e);
   }
