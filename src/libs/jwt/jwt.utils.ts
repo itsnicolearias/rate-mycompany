@@ -32,7 +32,7 @@ export const getVerifyToken = (user: Partial<User>) => {
       iat: moment().unix(),
       exp: moment().add(1, 'days').unix(),
     };
-    return jwt.sign(payload, config.jwtRecoverySecret);
+    return jwt.sign(payload, config.jwtVerifySecret);
   } catch (e) {
     throw boom.badRequest(e);
   }

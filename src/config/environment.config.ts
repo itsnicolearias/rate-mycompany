@@ -21,6 +21,7 @@ export const config = {
 
   jwtSecret: process.env.JWT_SECRET,
   jwtRecoverySecret: process.env.JWT_RECOVERY_SECRET,
+  jwtVerifySecret: process.env.JWT_VERIFY_SECRET,
 
   awsAccessKeyId: process.env.AWS_ACCESS_KEY_ID,
   awsSecretAccessKey: process.env.AWS_SECRET_ACCESS,

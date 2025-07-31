@@ -4,7 +4,7 @@ import { PrismaClient } from "@prisma/client";
 
 import { IAuthService } from "../interfaces/auth-service.interface";
 import { RegisterBody, LoginBody, VerificationBody, ForgotPassword, EnterPassword } from "../types/auth.types";
-import { getToken, getVerifyToken } from "../../../libs/jwt/jwt.utils";
+import { decodeToken, getToken, getVerifyToken } from "../../../libs/jwt/jwt.utils";
 import { sendEmail } from "../../../libs/nodemailer/utils";
 import { config } from "../../../config/environment.config";
 
@@ -91,7 +91,22 @@ class AuthService implements IAuthService {
 
     public async VerifyAccount(body: VerificationBody): Promise<any> {
         try {
+            const payload = decodeToken(body.token, config.jwtVerifySecret)
+
+            const user = await prisma.user.findFirst({ where: { user_id: payload.sub}})
+
+            if (!user) {
+                throw Boom.notFound('User not found')
+            }
+
+            if (user.verify_account_token !== body.token){
+                throw Boom.unauthorized("token isn't valid");
+            }
+
+            user.verified = true;
+            user.verify_account_token = null;
             
+            return('Account verified successfully')
         } catch (error) {
             throw Boom.badRequest(error)
         }
